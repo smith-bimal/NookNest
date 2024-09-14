@@ -1,0 +1,47 @@
+<% layout("/layouts/boilerplate") %>
+
+<div class="main-width mt-4">
+  <% if (properties.length > 0) { %>
+  <p class="text-secondary">Results for: "<%= searchQuery %>"</p>
+  <div class="row row-cols-lg-4 row-cols-md-2 row-cols-sm-2 row-column-xs-1">
+    <% for( property of properties ) { %>
+    <div class="trending-container mt-3">
+      <a href="/listings/<%= property.id %>" class="text-decoration-none">
+        <div>
+          <div class="card">
+            <div class="card-body">
+              <img src="<%= property.image.url %>" class="card-img-top" alt="Villas">
+              <div class="flex justify-content-between mb-sm-3 px-1">
+                <div class="text-content mt-3">
+                  <h5 class="card-title"><%= property.title %></h5>
+                  <p class="card-text text-secondary m-1"><i class="fa-solid fa-location-dot me-2"></i><%= property.country %></p>
+                  <p class="card-text text-secondary m-1"><small><i class="fa-regular fa-star me-2"></i><% if (property.reviews.length > 0) { %>
+                      <% let avgRating;
+                        let totalRating = 0;
+                        property.reviews.forEach(review => {
+                          totalRating += review.rating
+                        }); 
+                        avgRating = totalRating / property.reviews.length;
+                      %>
+                      <%= avgRating.toFixed(1) %>
+                      <% } else { %>New
+                      <% } %>
+                      (<%= (property.reviews).length.toLocaleString("en-IN") %> Reviews)</small></p>
+                  <h4 class="m-1 mb-0">₹ <%= property.price.toLocaleString("en-IN") %> <small class="fs-6 fw-normal">/night</small></h4>
+                  <small class="m-0 ms-1 tax text-secondary">*includes taxes & fees</small>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </a>
+    </div>
+    <% } %>
+    <% } else { %>
+    <div class="flex flex-wrap mb-5">
+      <img src="/assets/search_error.png" alt="Error" class="error-search">
+      <p class="text-secondary text-center fs-5">We couldn't find a match for "<%= searchQuery %>". Please try another search.</p>
+    </div>
+    <% } %>
+  </div>
+</div>

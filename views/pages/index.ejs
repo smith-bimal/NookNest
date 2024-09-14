@@ -1,0 +1,379 @@
+<% layout("/layouts/boilerplate") %>
+
+<% const currentDate = new Date();
+
+const tenDaysLater = new Date(currentDate.getTime() + (10 * 24 * 60 * 60 * 1000));
+const fourteenDaysLater = new Date(currentDate.getTime() + (14 * 24 * 60 * 60 * 1000));
+const eighteenDaysLater = new Date(currentDate.getTime() + (18 * 24 * 60 * 60 * 1000));
+const twentyFiveDaysLater = new Date(currentDate.getTime() + (25 * 24 * 60 * 60 * 1000));
+
+const day10 = tenDaysLater.getDate();
+const day14 = fourteenDaysLater.getDate();
+const day18 = eighteenDaysLater.getDate();
+const day25 = twentyFiveDaysLater.getDate();
+
+const month10Index = tenDaysLater.getMonth();
+const month14Index = fourteenDaysLater.getMonth();
+const month18Index = eighteenDaysLater.getMonth();
+const month25Index = twentyFiveDaysLater.getMonth();
+
+const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+const month10Name = monthNames[month10Index];
+const month14Name = monthNames[month14Index];
+const month18Name = monthNames[month18Index];
+const month25Name = monthNames[month25Index];
+%>
+
+<style>
+  .navbar {
+    margin-top: 1rem;
+    background-color: transparent !important;
+    align-items: flex-start;
+  }
+</style>
+
+<body>
+  <div>
+  <img src="/assets/pexels-pixabay-258154.jpg" class="index-hero-img position-absolute top-0 start-0" alt="bg_image">
+  
+  <!-- Hero content -->
+  <div class="hero-content d-flex flex-column justify-content-md-end main-width">
+    <h1 class="text-white">Find Your Best Staycation</h1>
+    <div class="booking-search mb-4 p-4 border">
+      <div class="row">
+        <div class=" col-md-4">
+          <div class="search-credentials">
+            <label for="search_location">Location</label>
+            <div class="search-credential-input">
+              <i class="fa-solid fa-location-crosshairs top-50 translate-middle-y"></i>
+              <input type="text" id="search_location" class="form-control" placeholder="Find location" />
+            </div>
+          </div>
+        </div>
+        <div class=" col-md-4">
+          <div class="search-credentials">
+            <label for="search_date_1">Check-in & Check-out Date</label>
+            <div class="search-credential-input">
+              <i class="fa-regular fa-calendar-check top-50 translate-middle-y"></i>
+              <input type="date" id="search_date_1" class="form-control" placeholder="Add dates" />
+            </div>
+          </div>
+        </div>
+        <div class=" col-md-4">
+          <div class="search-credentials">
+            <label for="search_gnr_count">Guests and Rooms</label>
+            <div class="search-credential-input">
+              <i class="fa-regular fa-user top-50 translate-middle-y"></i>
+              <input type="text" id="search_gnr_count" class="form-control" placeholder="1 guest, 1 room" disabled />
+              <i class="fa-solid fa-circle-chevron-down top-50 end-0 me-3"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row flex justify-content-between mt-3 ">
+        <div class="search-filter-container d-flex gap-md-2 gap-1 flex-wrap mb-md-0 mb-3">
+          <span class="flex">Filter:</span>
+
+          <div class="search-filter-option ">
+            <input type="checkbox" class="btn-check" id="btn-check-1-outlined" checked autocomplete="off">
+            <label class="btn btn-outline-dark rounded-pill" for="btn-check-1-outlined">Hotels</label><br>
+          </div>
+          <div class="search-filter-option">
+            <input type="checkbox" class="btn-check" id="btn-check-2-outlined" autocomplete="off">
+            <label class="btn btn-outline-dark rounded-pill" for="btn-check-2-outlined">Villas</label><br>
+          </div>
+          <div class="search-filter-option">
+            <input type="checkbox" class="btn-check" id="btn-check-3-outlined" autocomplete="off">
+            <label class="btn btn-outline-dark rounded-pill" for="btn-check-3-outlined">Apartments</label><br>
+          </div>
+          <div class="search-filter-option">
+            <input type="checkbox" class="btn-check" id="btn-check-4-outlined" autocomplete="off">
+            <label class="btn btn-outline-dark rounded-pill" for="btn-check-4-outlined">Resorts</label><br>
+          </div>
+          <div class="search-filter-option">
+            <input type="checkbox" class="btn-check" id="btn-check-5-outlined" autocomplete="off">
+            <label class="btn btn-outline-dark rounded-pill" for="btn-check-5-outlined">Cottages</label><br>
+          </div>
+
+        </div>
+
+        <div class="btn btn-dark btn-booking-search">Search &nbsp; <i class="fa-solid fa-arrow-right"></i></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <!-- Discover Destinations Content -->
+  <div class="main-width mt-4">
+    <h2>Discover Your Destinations</h2>
+    <p class="text-secondary">Explore our range of property types for every traveler's preference.</p>
+    <div class="row row-cols-lg-4 row-cols-md-2 row-cols-sm-2 row-column-xs-1">
+      <div class="discover-container mt-3">
+        <div>
+          <div class="card">
+            <div class="card-body">
+              <div class="flex justify-content-between mb-sm-3 mb-1 px-1">
+                <div class="text-content">
+                  <h5 class="card-title mt-0">Villas</h5>
+                  <p class="card-text text-secondary m-0"><i class="fa-solid fa-house me-2"></i><%= villas.length.toLocaleString("en-IN") %> Available</p>
+                </div>
+                <a href="/d/Villa" class="btn btn-outline-dark"><i class="fa-solid fa-arrow-right"></i></a>
+              </div>
+            </div>
+            <img src="/assets/villa.jpg" class="card-img-top" alt="Villas">
+          </div>
+        </div>
+      </div>
+
+      <div class="discover-container mt-3">
+        <div>
+          <div class="card">
+            <div class="card-body">
+              <div class="flex justify-content-between mb-sm-3 mb-1 px-1">
+                <div class="text-content">
+                  <h5 class="card-title mt-0">Apartments</h5>
+                  <p class="card-text text-secondary m-0"><i class="fa-solid fa-building me-2"></i><%= apartments.length.toLocaleString("en-IN") %> Available</p>
+                </div>
+                <a href="/d/Apartment" class="btn btn-outline-dark"><i class="fa-solid fa-arrow-right"></i></a>
+              </div>
+            </div>
+            <img src="/assets/apartment.jpg" class="card-img-top" alt="Villas">
+          </div>
+        </div>
+      </div>
+
+      <div class="discover-container mt-3">
+        <div>
+          <div class="card">
+            <div class="card-body">
+              <div class="flex justify-content-between mb-sm-3 mb-1 px-1">
+                <div class="text-content">
+                  <h5 class="card-title mt-0">Resorts</h5>
+                  <p class="card-text text-secondary m-0"><i class="fa-solid fa-mountain-city me-2"></i><%= resorts.length.toLocaleString("en-IN") %> Available</p>
+                </div>
+                <a href="/d/Resort" class="btn btn-outline-dark"><i class="fa-solid fa-arrow-right"></i></a>
+              </div>
+            </div>
+            <img src="/assets/resort.jpg" class="card-img-top" alt="Villas">
+          </div>
+        </div>
+      </div>
+
+      <div class="discover-container mt-3">
+        <div>
+          <div class="card">
+            <div class="card-body">
+              <div class="flex justify-content-between mb-sm-3 mb-1 px-1">
+                <div class="text-content">
+                  <h5 class="card-title mt-0">Cottages</h5>
+                  <p class="card-text text-secondary m-0"><i class="fa-solid fa-campground me-2"></i><%= cottages.length.toLocaleString("en-IN") %> Available</p>
+                </div>
+                <a href="/d/Cottage" class="btn btn-outline-dark"><i class="fa-solid fa-arrow-right"></i></a>
+              </div>
+            </div>
+            <img src="/assets/cottage.jpg" class="card-img-top" alt="Villas">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <hr>
+
+  <!-- Trending Hotel Content -->
+  <% if (villas.length>0) { %>
+  <div class="main-width mt-4">
+    <h2>Top trending hotel in worldwide</h2>
+    <p class="text-secondary">Discover the most trending hotels worldwide for an unforgettable experience.</p>
+
+    <div class="trending-country-container flex justify-content-between flex-wrap gap-2">
+      <div class="country-selector flex justify-content-start flex-wrap gap-2 d-sm-flex">
+        <input type="radio" class="btn-check" id="country1" name="hotel-country" checked>
+        <label class="btn btn-outline-dark rounded-pill" for="country1">United States</label>
+
+        <input type="radio" class="btn-check" id="country2" name="hotel-country">
+        <label class="btn btn-outline-dark rounded-pill" for="country2">India</label>
+
+        <input type="radio" class="btn-check" id="country3" name="hotel-country">
+        <label class="btn btn-outline-dark rounded-pill" for="country3">United Kingdom</label>
+
+        <input type="radio" class="btn-check" id="country4" name="hotel-country">
+        <label class="btn btn-outline-dark rounded-pill" for="country4">Italy</label>
+      </div>
+      <a href="/d/all" class="btn btn-outline-dark gray-btn">See All &nbsp;<i class="fa-solid fa-arrow-right"></i></a>
+    </div>
+
+    <div class="row row-cols-lg-4 row-cols-md-2 row-cols-sm-2 row-column-xs-1">
+      <% for( let index = 0; index < 4; index++ ) { %>
+      <div class="trending-container mt-3">
+        <a href="/listings/<%= villas[index].id %>" class="text-decoration-none">
+          <div>
+            <div class="card">
+              <div class="card-body">
+                <img src="<%= villas[index].image.url %>" class="card-img-top" alt="Villas">
+                <div class="flex justify-content-between mb-sm-3 px-1">
+                  <div class="text-content mt-3">
+                    <h5 class="card-title"><%= villas[index].title %></h5>
+                    <p class="card-text text-secondary m-1"><i class="fa-solid fa-location-dot me-2"></i><%= villas[index].country %></p>
+                    <p class="card-text text-secondary m-1"><small><i class="fa-regular fa-star me-2"></i>
+                        <% if (villas[index].reviews.length > 0) { %>
+                        <% let avgRating;
+                          let totalRating = 0;
+                          villas[index].reviews.forEach(review => {
+                            totalRating += review.rating
+                          }); 
+                          avgRating = totalRating / villas[index].reviews.length;
+                        %>
+                        <%= avgRating.toFixed(1) %>
+                        <% } else { %>New
+                        <% } %>
+                        (<%= (villas[index].reviews).length.toLocaleString("en-IN") %> Reviews)</small></p>
+                    <h4 class="m-1 mb-0">₹ <%= villas[index].price.toLocaleString("en-IN") %> <small class="fs-6 fw-normal">/night</small></h4>
+                    <small class="m-0 ms-1 tax text-secondary">*includes taxes & fees</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </a>
+      </div>
+      <% } %>
+
+    </div>
+  </div>
+  <% }else{ %>
+  <div class="main-width mt-4">
+    <h2>No hotels available.</h2>
+    <p class="text-secondary">We're sorry, but no hotels are available at the moment.</p>
+  </div>
+  <hr>
+  <% } %>
+
+  <!-- Most Visited Hotel Content -->
+  <% if (placesWithReview.length > 0) { %>
+  <div class="main-width mt-4">
+    <h2>Most visited hotels of all time</h2>
+    <p class="text-secondary">Trending exceptional hospitality that captivated travelers of all time.</p>
+
+    <div class="row row-cols-lg-4 row-cols-md-2 row-cols-sm-2 row-column-xs-1">
+      <% let count; 
+      if (placesWithReview.length >4) { 
+        count = 4;
+      } else{
+      count = placesWithReview.length;
+      }%>
+      <% for( let index = 0; index < count; index++ ) { %>
+      <div class="trending-container mt-3">
+        <a href="/listings/<%= placesWithReview[index].id %>" class="text-decoration-none">
+          <div>
+            <div class="card">
+              <div class="card-body">
+                <img src="<%= placesWithReview[index].image.url %>" class="card-img-top" alt="Villas">
+                <div class="flex justify-content-between mb-sm-3 px-1">
+                  <div class="text-content mt-3">
+                    <h5 class="card-title"><%= placesWithReview[index].title %></h5>
+                    <p class="card-text text-secondary m-1"><i class="fa-solid fa-location-dot me-2"></i><%= placesWithReview[index].country %></p>
+                    <p class="card-text text-secondary m-1"><small><i class="fa-regular fa-star me-2"></i><% if (placesWithReview[index].reviews.length > 0) { %>
+                        <% let avgRating;
+                          let totalRating = 0;
+                          placesWithReview[index].reviews.forEach(review => {
+                            totalRating += review.rating
+                          }); 
+                          avgRating = totalRating / placesWithReview[index].reviews.length;
+                        %>
+                        <%= avgRating.toFixed(1) %>
+                        <% } else { %>New
+                        <% } %>
+                        (<%= (placesWithReview[index].reviews).length.toLocaleString("en-IN") %> Reviews)</small></p>
+                    <h4 class="m-1 mb-0">₹ <%= placesWithReview[index].price.toLocaleString("en-IN") %> <small class="fs-6 fw-normal">/night</small></h4>
+                    <small class="m-0 ms-1 tax text-secondary">includes taxes & fees</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </a>
+      </div>
+      <% } %>
+
+    </div>
+  </div>
+  <% } %>
+
+  <!-- Promo Code Content -->
+  <div class="main-width my-md-4">
+    <h2>Get promo for a cheaper price</h2>
+    <p class="text-secondary">Secure Your Promo at an Irresistible Price and Enjoy Great Discounts Across Our Range of Products!</p>
+    <div class="row row-cols-md-2 row-column-sm-1 ">
+      <div class="discount-container">
+        <div class="discount1 p-sm-4 p-3 mb-3">
+          <div class="flex justify-content-between">
+            <i class="fa-solid fa-tags p-2"></i>
+            <span class="rounded-pill text-white fw-light p-2 px-3">Valid only on <%= day10 %> <%= month10Name %> - <%= day18 %> <%= month18Name %></span>
+          </div>
+          <p class="text-white mt-4 mb-1">Get Extra Discount at <br>Azure Oasis Hotel</p>
+          <h1 class="text-white mb-1">50%</h1>
+          <small class="fw-light text-white">*with Terms and Conditions</small>
+        </div>
+      </div>
+
+      <div class="discount-container">
+        <div class="discount2 p-sm-4 p-3 mb-3">
+          <div class="flex justify-content-between">
+            <i class="fa-solid fa-tags p-2"></i>
+            <span class="rounded-pill text-white fw-light p-2 px-3">Valid only on <%= day14 %> <%= month14Name %> - <%= day25 %> <%= month25Name %></span>
+          </div>
+          <p class="text-white mt-4 mb-1">Exclusive Deals <br>Just For You</p>
+          <h1 class="text-white mb-1">75%</h1>
+          <small class="fw-light text-white">*with Terms and Conditions</small>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Demo Logo Section -->
+  <div class="main-width my-md-4 flex-wrap flex justify-content-md-between gap-3 p-md-4 p-2 demo-logo-container">
+    <img src="/assets/demo_logo1.png" alt="demo_logo1" class="demo-logo1">
+    <img src="/assets/demo_logo2.png" alt="demo_logo2" class="demo-logo2">
+    <img src="/assets/demo_logo3.png" alt="demo_logo3" class="demo-logo3">
+    <img src="/assets/demo_logo4.png" alt="demo_logo4" class="demo-logo4">
+    <img src="/assets/demo_logo5.png" alt="demo_logo5" class="demo-logo5">
+    <img src="/assets/demo_logo6.png" alt="demo_logo6" class="demo-logo6">
+  </div>
+
+  <!-- Below card Content -->
+  <div class="main-width d-flex py-3">
+    <div class="col-md-5 col-12 pe-md-3 p-0">
+      <div class="booking-card mb-3">
+        <img src="/assets/hotel-interior-design-zikzak-architects.jpg" alt="bg">
+        <div class="p-sm-4 p-3">
+          <i class="fa-solid fa-globe p-3"></i>
+          <h2 class="text-white fw-normal mt-4">Explore more to get your <br>comfort zone.</h2>
+          <p>Book your perfect stay with us.</p>
+          <a href="/d/all" class="btn btn-light gray-btn mt-3">Booking Now &nbsp;<i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+      </div>
+
+      <div class="available-card">
+        <img src="/assets/Is-there-a-hotel-inside-LAX-Airport-1.jpg" alt="bg">
+        <div class="p-sm-4 p-3">
+          <h5 class="text-white fw-normal mt-5 pt-4">Hotel Available</h5>
+          <h1 class="text-white mb-0"><%= listings.length.toLocaleString("en-IN") %></h1>
+        </div>
+      </div>
+    </div>
+    <div class="col-7 p-md-4 flex d-md-flex d-none accommodation">
+      <h2 class="text-white text-center fw-normal">Beyond accommodation, creating <br>memories of a lifetime.</h2>
+    </div>
+  </div>
+</body>
+
+<script>
+  flatpickr("#search_date_1", {
+    mode: "range",
+    minDate: "today",
+    dateFormat: "j-M",
+    position: "below",
+  });
+</script>

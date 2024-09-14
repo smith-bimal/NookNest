@@ -1,0 +1,409 @@
+<script>
+  let mapToken = "<%= process.env.MAP_TOKEN %>";
+  let coordinates = <%- JSON.stringify(listing.geometry.coordinates) %>;
+</script>
+
+<% layout("/layouts/boilerplate") %>
+
+<body>
+  <div class="row col-lg-9 m-auto mt-4">
+    <div class="listing-heading-top flex justify-content-between">
+      <h3><%= listing.title %></h3>
+      <div class="d-flex gap-3">
+        <span class="btn p-1">
+          <i class="fa-solid fa-arrow-up-from-bracket me-sm-1 m-0"></i><span class="d-sm-inline d-none">Share</span>
+        </span>
+        <span class="btn p-1">
+          <i class="fa-regular fa-heart me-sm-1 m-0"></i><span class="d-sm-inline d-none">Save</span>
+        </span>
+      </div>
+    </div>
+
+    <div class="card mb-2 p-sm-3 p-0">
+      <img src="<%= listing.image.url %>" class="card-img-top show-img mb-4" alt="Listing_image" />
+
+      <div class="card-body flex justify-content-between px-sm-0 px-2">
+        <div class="listing-details-section col-md-7">
+          <h4 class="card-text">Entire <%= listing.property_type %> in <%= listing.location %>, <%= listing.country %></h4>
+          <h6 class="card-text"><i class="fa-solid fa-star me-2"></i><% if (listing.reviews.length > 0) { %><% let avgRating;
+            let totalRating = 0;
+            listing.reviews.forEach(review => {
+            totalRating += review.rating
+            });
+            avgRating = totalRating / listing.reviews.length;
+            %><%= avgRating.toFixed(1) %><% } else { %>New<% } %> &centerdot;
+            <u><%= (listing.reviews).length.toLocaleString("en-IN") %> Reviews</u>
+          </h6>
+
+          <hr class="my-4">
+          <div class="host-publish-sec d-flex align-items-center gap-3">
+            <div class="host-img publish-host-img">
+              <img src="/assets/user_default.png" alt="host_img">
+            </div>
+            <div>
+              <p class="card-text mb-1">Hosted by <b><%= listing.owner.username %></b></p>
+              <p class="card-text text-secondary fw-light mb-1">
+                <% let ownerAge = checkAge(listing.owner.created_at); %>
+                <% if (ownerAge.monthsDifference == 0) { %>
+                Hosting Newly
+                <% } else if (ownerAge.monthsDifference < 12){ %>
+                <%= ownerAge.monthsDifference %> months hosting
+                <% } else { %>
+                <%= ownerAge.yearsDifference %> years hosting
+                <% } %>
+              </p>
+            </div>
+          </div>
+
+          <hr class="my-4">
+          
+          <h5>About this place</h5>
+          <% if (listing.description.length >550){ %>
+          <pre><%= listing.description.slice(0,550) %>...</pre>
+          <div class="btn show-more-btn p-0"><span class="text-decoration-underline">Show more</span>&nbsp;<small><i class="fa-solid fa-greater-than"></i></small></div>
+          <% }else{ %>
+          <pre><%= listing.description %></pre>
+          <% } %>
+
+          <hr class="my-4">
+
+          <div>
+            <h5>What this place offers</h5>
+            <% if (listing.offerings.length >0) { %>
+            <div class="offerings-container d-flex gap-4">
+              <div class="">
+                <table class="table">
+                  <% for( let index = 0; index < 6; index++ ) { %>
+                  <tr>
+                    <td><%= listing.offerings[index] %></td>
+                  </tr>
+                  <% } %>
+                </table>
+              </div>
+              <div class="d-sm-block d-none">
+                <table class="table">
+                  <% for( let index = 6; index < 9; index++ ) { %>
+                  <tr>
+                    <td><%= listing.offerings[index] %></td>
+                  </tr>
+                  <% } %>
+                </table>
+              </div>
+            </div>
+            <% if (listing.offerings.length > 9) { %>
+            <div class="show-amenities-btn btn btn-outline-dark px-3 py-2">Show all <%= listing.offerings.length %> amenities</div>
+            <% } %>
+            <% } else { %>
+            <p class="m-0">This place does not have any amenities to offer yet.</p>
+            <% } %>
+          </div>
+
+        </div>
+
+        <div class="listing-booking-section col-md-4">
+          <div class="listing-booking-card p-4 mt-2 border rounded-4">
+            <h4 class="d-inline-block">₹<%= listing.price.toLocaleString("en-IN") %></h4><span class="text-secondary"> /night</span>
+
+            <div class="search-credentials mt-3">
+              <div class="search-credential-input">
+                <i class="fa-regular fa-calendar-check top-50 translate-middle-y"></i>
+                <input type="date" id="search_date_2" class="form-control" placeholder="Check-in & Check-out Date" />
+              </div>
+            </div>
+
+            <div class="search-credentials mt-3">
+              <div class="search-credential-input">
+                <i class="fa-regular fa-user top-50 translate-middle-y"></i>
+                <input type="number" id="guest_count" min="0" class="form-control" placeholder="Number of Guests" value="1" />
+              </div>
+            </div>
+
+            <!-- Elements that should be toggled based on date selection -->
+            <div id="reserve_button" class="btn btn-dark mt-4 flex py-2" style="display: none;">Reserve</div>
+            <div id="check_availability_button" class="btn btn-dark mt-4 flex py-2" style="display: block;">Check availability</div>
+
+            <div class="w-100">
+              <div class="btn btn-sm border text-center mb-2" id="change_date">Change date</div>
+              <p id="price_details" class="text-center text-secondary" style="display: none;">
+                <small>You won't be charged yet.</small>
+              </p>
+            </div>
+
+            <div id="price_calc" class="price-calc justify-content-between " style="display: none;">
+              <span class="text-secondary text-decoration-underline">₹<%= listing.price.toLocaleString("en-IN") %> X <span id="number_of_days"></span> night(s)</span>
+              <span class="text-secondary">₹<span class="total_cost"></span></span>
+            </div>
+            <hr id="price_divider" style="display: none;">
+
+            <div id="total_before_taxes" class="price-calc justify-content-between " style="display: none;">
+              <span class="fw-bold">Total before taxes</span>
+              <span class="fw-bold">₹<span class="total_cost"></span></span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="row col-lg-9 m-auto mt-3 mb-4">
+    <% if (currentUser) { %>
+    <hr>
+    <h4>Leave a Review</h4>
+    <form action="/listings/<%= listing._id %>/review" method="POST" novalidate class="needs-validation">
+      <label for="rating" class="form-label">Ratings</label>
+      <fieldset class="starability-growRotate">
+        <input type="radio" id="no-rate" class="input-no-rate" name="review[rating]" value="1" checked aria-label="No rating." />
+        <input type="radio" id="first-rate1" name="review[rating]" value="1" />
+        <label for="first-rate1" title="Terrible">1 star</label>
+        <input type="radio" id="first-rate2" name="review[rating]" value="2" />
+        <label for="first-rate2" title="Not good">2 stars</label>
+        <input type="radio" id="first-rate3" name="review[rating]" value="3" />
+        <label for="first-rate3" title="Average">3 stars</label>
+        <input type="radio" id="first-rate4" name="review[rating]" value="4" />
+        <label for="first-rate4" title="Very good">4 stars</label>
+        <input type="radio" id="first-rate5" name="review[rating]" value="5" />
+        <label for="first-rate5" title="Amazing">5 stars</label>
+      </fieldset>
+
+
+      <label for="comment" class="form-label">Comments</label>
+      <textarea id="comment" name="review[comment]" class="form-control" placeholder="Add a Review" rows="5" required></textarea>
+      <div class="invalid-feedback">Please add some comments for review.</div>
+
+      <button type="submit" class="btn btn-outline-dark mt-3 mb-4">Submit</button>
+    </form>
+    <% } %>
+
+    <hr class="my-2">
+    <div>
+      <% if (listing.reviews && listing.reviews.length>0) { %>
+      <% if (listing.reviews.length >= 3) { %>
+      <h4 class="my-4"><i class="fa-solid fa-star me-1"></i><% let avgRating;
+        let totalRating = 0;
+        listing.reviews.forEach(review => {
+          totalRating += review.rating
+        }); 
+        avgRating = totalRating / listing.reviews.length;
+        %> <%= avgRating.toFixed(2) %> &centerdot; <%= listing.reviews.length %> Reviews</h4>
+      <% } else {%>
+      <h4>All Reviews</h4>
+      <p class="text-secondary">Average rating will appear after 3 reviews</p>
+      <% } %>
+
+      <div class="d-grid">
+        <div class="row row-cols-sm-2 row-cols-1">
+          <% listing.reviews.forEach(review => { %>
+          <div class="card mb-3 mb-sm-4">
+            <div class="card-body">
+              <div class="user-img-name flex justify-content-start">
+                <div class="flex bg-dark text-white border rounded-circle username-div">
+                  <p class="fw-bold m-0"><%= review.author.username.slice(0,1).toUpperCase() %></p>
+                </div>
+                <div class="ms-2">
+                  <p class=" my-1"><%= review.author.username.slice(0,1).toUpperCase() %><%= review.author.username.slice(1,review.author.username.length) %></p>
+                  <p class="mb-2 text-secondary"><small>
+                      <% let reviewAge = checkAge(review.author.created_at); %>
+                      <% if (reviewAge.monthsDifference == 0) { %>
+                      Hosting Newly
+                      <% } else if (reviewAge.monthsDifference < 12){ %>
+                      <%= reviewAge.monthsDifference %> months hosting
+                      <% } else { %>
+                      <%= reviewAge.yearsDifference %> years hosting
+                      <% } %>
+                    </small></p>
+                </div>
+              </div>
+              <div class="d-flex">
+                <p class="starability-result d-inline-block" data-rating="<%= review.rating %>"></p>
+
+                <p class="review-created-at">
+                  <small>
+                    <% const date = new Date(review.createdAt);
+
+                  const monthAbbreviations = [
+                  'January', 'February', 'March', 'April', 'May', 'June',
+                  'July', 'August', 'September', 'October', 'November', 'December'
+                  ];
+
+                  const monthIndex = date.getMonth(); // 7 for August
+                  const year = date.getFullYear(); // 2024
+
+                  const formattedDate = `${monthAbbreviations[monthIndex]} ${year}`; %>
+                    <b> &centerdot; </b><%= formattedDate %>
+                  </small>
+                </p>
+              </div>
+
+              <p class="card-text ms-2 review-line"><%= review.comment %></p>
+
+              <% if (currentUser && review.author.id === currentUser.id) { %>
+              <form action="/listings/<%= listing._id %>/review/<%= review._id %>?_method=DELETE" method="POST">
+                <button type="submit" class="btn btn-sm text-danger">Delete</button>
+              </form>
+              <% } %>
+
+            </div>
+          </div>
+          <% }) %>
+        </div>
+      </div>
+      <hr class="my-2">
+      <% } %>
+    </div>
+  </div>
+
+  <div class="row col-lg-9 m-auto mt-3 mb-4">
+    <h4>Where you'll be</h4>
+    <div id="map"></div>
+    <p class="my-3 "><%= listing.location %>, <%= listing.country %></p>
+    <hr class="my-2">
+  </div>
+
+  <div class="row col-lg-9 m-auto mt-3 mb-4">
+    <h4 class="mb-4">Things to know</h4>
+    <div class="row things-container">
+      <div class="col-md-4 mb-4">
+        <h6>House Rules :</h6>
+        <p>Check-in: 12:00 pm – 6:00 pm</p>
+        <p>Checkout before 10:00 am</p>
+        <p class="mb-3">4 guests maximum</p>
+        <p class="cursor-p"><span class="fw-bold text-decoration-underline">Show more</span> <i class="fa-solid fa-angle-right"></i></p>
+        <hr class="m-0 mt-4 d-md-none d-block">
+      </div>
+      <div class="col-md-4 mb-4">
+        <h6>Safety & property :</h6>
+        <p>No carbon monoxide alarm</p>
+        <p>No smoke alarm</p>
+        <p class="mb-3">Exterior security cameras on property</p>
+        <p class="cursor-p"><span class="fw-bold text-decoration-underline">Show more</span> <i class="fa-solid fa-angle-right"></i></p>
+        <hr class="m-0 mt-4 d-md-none d-block">
+      </div>
+      <div class="col-md-4 mb-4">
+        <h6>Cancellation policy :</h6>
+        <p>Cancel before 7 days of check-in for a partial refund. After that, your refund depends on when you cancel.</p>
+        <p class="mb-3">Review this Host’s full policy for details.</p>
+        <p class="cursor-p"><span class="fw-bold text-decoration-underline">Show more</span> <i class="fa-solid fa-angle-right"></i></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Show more description screen -->
+  <div class="desc-container flex">
+    <div class="description-popup bg-white border rounded-4 p-4 mx-1">
+      <div class="close-btn dsc-close-btn mb-4"><i class="fa-solid fa-x"></i></div>
+      <h3 class="mb-4">About this place</h3>
+      <div class="desc-content">
+        <pre><%= listing.description %></pre>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Show more amenities screen -->
+  <div class="amenities-container flex">
+    <div class="amenities-popup bg-white border rounded-4 p-4 mx-1">
+      <div class="close-btn amenities-close-btn mb-4"><i class="fa-solid fa-x"></i></div>
+      <h3 class="mb-4">What this place offers</h3>
+
+      <div class="table-div">
+        <table class="table">
+          <% for( let index = 0; index < listing.offerings.length; index++ ) { %>
+          <tr>
+            <td><%= listing.offerings[index] %></td>
+          </tr>
+          <% } %>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Successful booking popup -->
+  <div class="booking-overlay">
+    <div class="booking-confirmation-container">
+      <div class="booking-confirmation-popup bg-white border rounded-4 p-4 mx-1 position-relative">
+        <div class="close-btn booking-confirmation-close-btn mb-4 p-1 position-absolute"><i class="fa-solid fa-x"></i></div>
+        <% if (currentUser) { %>
+        <h3 class="mb-4 mx-3">Booking Confirmed</h3>
+        <p class="mb-4">Your booking for <%= listing.title %> has been confirmed. Your booking ID is <strong>BOOKING ID</strong>.</p>
+        <p class="mb-4">Please check your email for the booking details.</p>
+        <% } else {%>
+        <h3 class="mb-4 mx-3">You need to login first</h3>
+        <p class="mb-4">Please <span class="login-btn text-decoration-underline text-primary">login</span>/<span class="signup-btn text-decoration-underline text-primary">signup</span> to proceed with the booking experience.</p>
+        <% } %>
+        <div class="d-flex justify-content-center">
+          <button type="button" class="btn btn-outline-dark" onclick="window.location.href='/listings'">Back to Home</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+
+<script src="/js/map.js"></script>
+
+<script>
+  flatpickr("#search_date_2", {
+    mode: "range",
+    minDate: "today",
+    dateFormat: "j-M",
+    position: "below",
+    onChange: function(selectedDates, dateStr, instance) {
+      const reserveButton = document.getElementById('reserve_button');
+      const checkAvailabilityButton = document.getElementById('check_availability_button');
+      const priceDetails = document.getElementById('price_details');
+      const priceCalc = document.getElementById('price_calc');
+      const priceDivider = document.getElementById('price_divider');
+      const totalBeforeTaxes = document.getElementById('total_before_taxes');
+      const numberOfDaysElement = document.getElementById('number_of_days');
+      const totalCostElement = document.querySelectorAll('.total_cost');
+      const changeDate = document.getElementById('change_date');
+
+      if (selectedDates.length === 2) {
+        const startDate = selectedDates[0];
+        const endDate = selectedDates[1];
+        const diffInTime = endDate.getTime() - startDate.getTime();
+        const diffInDays = Math.round(diffInTime / (1000 * 60 * 60 * 24));
+
+        // Calculate total cost
+        const pricePerNight = <%= listing.price %>;
+        const totalCost = diffInDays * pricePerNight;
+
+        // Update the hidden inputs
+        numberOfDaysElement.textContent = diffInDays;
+        totalCostElement.forEach(el => {
+          el.textContent = totalCost.toLocaleString("en-IN");
+        })
+
+        // Show the reserve button and price details
+        reserveButton.style.display = 'block';
+        checkAvailabilityButton.style.display = 'none';
+        priceDetails.style.display = 'block';
+        priceCalc.style.display = 'flex';
+        priceDivider.style.display = 'block';
+        totalBeforeTaxes.style.display = 'flex';
+        changeDate.style.display = 'block';
+      } else {
+        // Hide the reserve button and price details
+        reserveButton.style.display = 'none';
+        checkAvailabilityButton.style.display = 'block';
+        priceDetails.style.display = 'none';
+        priceCalc.style.display = 'none';
+        priceDivider.style.display = 'none';
+        totalBeforeTaxes.style.display = 'none';
+        changeDate.style.display = 'none';
+      }
+    }
+  });
+
+  document.getElementById('check_availability_button').addEventListener('click', function() {
+    // Trigger the click event on the #search_date_2 input to open the calendar
+    document.getElementById('search_date_2').click();
+  });
+
+  document.getElementById('change_date').addEventListener('click', function() {
+    // Trigger the click event on the #search_date_2 input to open the calendar
+    document.getElementById('search_date_2').click();
+  });
+</script>
+
+<script src="/js/showAmenity.js"></script>
