@@ -154,3 +154,4 @@ gsap.from(".banner-msg span", {
 //     start: "top 75%",
 //   },
 // });
+ 
